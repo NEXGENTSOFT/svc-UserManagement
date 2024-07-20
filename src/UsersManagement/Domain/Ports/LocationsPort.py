@@ -7,17 +7,5 @@ class LocationsPort(ABC):
         pass
 
     @abstractmethod
-    def get_locations(self):
-        pass
-
-    @abstractmethod
-    def create_locations(self):
-        pass
-
-    @abstractmethod
-    def update_locations(self):
-        pass
-
-    @abstractmethod
-    def delete_locations(self):
+    def get_clima(self, location:Locations):
         pass

@@ -1,0 +1,11 @@
+.venv/
+.env
+.idea/
+
+*.iml
+*.ipr
+*.iws
+
+*.idea/
+
+*.log

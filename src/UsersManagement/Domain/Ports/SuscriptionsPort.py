@@ -6,17 +6,17 @@ class SuscriptionsPort(ABC):
         pass
 
     @abstractmethod
-    def get_suscriptions(self):
+    def get_suscriptions(self, user_id):
         pass
 
     @abstractmethod
-    def create_suscriptions(self):
+    def create_suscriptions(self, suscriptions: Suscriptions):
         pass
 
     @abstractmethod
-    def update_suscriptions(self):
+    def update_suscriptions(self, new_start_date, uuid):
         pass
 
     @abstractmethod
-    def delete_suscriptions(self):
+    def delete_suscriptions(self, suscription_uuid):
         pass

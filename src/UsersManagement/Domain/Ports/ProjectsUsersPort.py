@@ -6,17 +6,17 @@ class ProjectsUsersPort(ABC):
             pass
 
         @abstractmethod
-        def get_projects_users(self):
+        def get_projects_users(self, user_id):
             pass
 
         @abstractmethod
-        def create_projects_users(self):
+        def find_projects_users_by_uuid(self, uuid):
             pass
 
         @abstractmethod
-        def update_projects_users(self):
+        def create_projects_users(self, projects_users: ProjectsUsers):
             pass
 
         @abstractmethod
-        def delete_projects_users(self):
+        def delete_projects_users(self, relation_uuid: str):
             pass

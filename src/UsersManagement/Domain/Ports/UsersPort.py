@@ -6,22 +6,22 @@ class UsersPort(ABC):
         pass
 
     @abstractmethod
-    def get_users(self):
+    def get_users(self, uuid: str):
         pass
 
     @abstractmethod
-    def create_users(self):
+    def create_users(self, user: Users):
         pass
 
     @abstractmethod
-    def update_users(self):
+    def update_users(self, uuid: str, password: str, username: str):
         pass
 
     @abstractmethod
-    def delete_users(self):
+    def delete_users(self, uuid: str, password: str):
         pass
 
 
     @abstractmethod
-    def login(self):
+    def login(self, email: str, password: str):
         pass
