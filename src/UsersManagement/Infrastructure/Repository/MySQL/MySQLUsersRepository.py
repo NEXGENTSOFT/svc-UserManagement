@@ -9,6 +9,7 @@ from src.UsersManagement.Infrastructure.Models.MySQL.MySQLUsersModel import MySQ
 from src.UsersManagement.Domain.Ports.UsersPort import UsersPort
 from src.Database.MySQL.connection import Base, engine, session_local
 from src.UsersManagement.Infrastructure.Utilities.password_utils import hash_password, check_password
+from src.UsersManagement.Infrastructure.Middlewares.functionsJWT import write_token
 
 class MySQLUsersRepository(UsersPort):
 
@@ -35,10 +36,11 @@ class MySQLUsersRepository(UsersPort):
             newUser = Model(**user.__dict__)
             self.db.add(newUser)
             self.db.commit()
+            token = write_token(user.to_json())
             response = BaseResponse(
                 success=True,
                 message='Successfully created new user',
-                data=newUser.to_json()
+                data={"user": newUser.to_json(), "token": token}
             )
             return response.to_response()
         except Exception as e:
@@ -84,10 +86,11 @@ class MySQLUsersRepository(UsersPort):
             if model is None:
                 raise NotFoundError()
             if check_password(password, model.password):
+                token = write_token(model.to_json())
                 response = BaseResponse(
                     success=True,
                     message='Successfully logged in',
-                    data=model.to_json()
+                    data={"user": model.to_json(), token: token}
                 )
                 return response.to_response()
             else:
