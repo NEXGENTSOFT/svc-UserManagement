@@ -14,7 +14,7 @@ class SuscriptionsPort(ABC):
         pass
 
     @abstractmethod
-    def update_suscriptions(self, new_start_date, uuid):
+    def update_suscriptions(self, uuid):
         pass
 
     @abstractmethod

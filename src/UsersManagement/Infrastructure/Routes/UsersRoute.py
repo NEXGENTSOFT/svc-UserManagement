@@ -17,22 +17,22 @@ delete_controller = DeleteController(repository)
 user_route = Blueprint('UsersRoute', __name__)
 
 
-@user_route("/<string:uuid>", methods=['GET'])
+@user_route.route("/<string:uuid>", methods=['GET'])
 def get(uuid):
     return get_controller.run(uuid)
 
-@user_route("/login", methods=['POST'])
+@user_route.route("/login", methods=['POST'])
 def login():
     return login_controller.run(request)
 
-@user_route("/", methods=['POST'])
+@user_route.route("/", methods=['POST'])
 def create():
     return create_controller.run(request)
 
-@user_route("/", methods=['PUT'])
+@user_route.route("/", methods=['PUT'])
 def update():
     return update_controller.run(request)
 
-@user_route("/", methods=['DELETE'])
+@user_route.route("/", methods=['DELETE'])
 def delete():
     return delete_controller.run(request)

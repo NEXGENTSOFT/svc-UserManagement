@@ -9,7 +9,7 @@ class MySQLUsersModel(Base):
     name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     email = Column(String(100), nullable=False, unique=True)
-    password = Column(String(36), nullable=False)
+    password = Column(String(256), nullable=False)
     username = Column(String(100), nullable=False)
     birthdate = Column(Date, nullable=False)
 
@@ -20,7 +20,6 @@ class MySQLUsersModel(Base):
             'name': self.name,
             'last_name': self.last_name,
             'email': self.email,
-            'password': self.password,
             'username': self.username,
             'birthdate': self.birthdate
         }

@@ -7,5 +7,5 @@ class CreateProjectsUsersUseCase:
         self.port = port
 
     def run(self, request):
-        entity = Entity(**request.__dict__)
+        entity = Entity(**request)
         return self.port.create_projects_users(entity)

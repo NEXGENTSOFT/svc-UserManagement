@@ -1,3 +1,5 @@
+import uuid
+
 from src.UsersManagement.Domain.Entity.Suscriptions import Suscriptions
 from src.UsersManagement.Domain.Ports.SuscriptionsPort import SuscriptionsPort
 from src.UsersManagement.Infrastructure.Advices.Exceptions.NotCreatedError import NotCreatedError
@@ -7,6 +9,8 @@ from src.UsersManagement.Infrastructure.Advices.Exceptions.NotUpdatedError impor
 from src.UsersManagement.Infrastructure.DTOS.Responses.BaseResponse import BaseResponse
 from src.UsersManagement.Infrastructure.Models.MySQL.MySQLSuscriptionsModel import MySQLSuscriptionsModel as Model
 from src.Database.MySQL.connection import Base, engine, session_local
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 class MySQLSuscriptionsRepository(SuscriptionsPort):
@@ -16,20 +20,20 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
 
     def get_suscriptions(self, user_id):
         try:
-            model = self.db.get(Model.user_id == user_id)
+            model = self.db.query(Model).filter(Model.user_id == user_id).first()
             if model is None:
                 raise NotFoundError()
             return BaseResponse(
                 success=True,
                 message='Suscriptions found',
                 data=model.to_json()
-            )
+            ).to_response()
         except Exception as e:
             raise NotFoundError()
 
     def create_suscriptions(self, suscriptions: Suscriptions):
         try:
-            model = Model(**suscriptions.__dict__)
+            model = Model(starts=datetime.now(), user_id=suscriptions.user_id, uuid=suscriptions.uuid, ends_at=datetime.now()+timedelta(days=7))
             self.db.add(model)
             self.db.commit()
             return BaseResponse(
@@ -37,22 +41,23 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
                 message='Suscriptions created',
                 data=model.to_json(),
                 status_code=201
-            )
+            ).to_response()
         except Exception as e:
             raise NotCreatedError()
 
-    def update_suscriptions(self, new_start_date, uuid):
+    def update_suscriptions(self, uuid):
         try:
             model = self.db.query(Model).filter(Model.uuid == uuid).first()
             if model is None:
                 raise NotFoundError()
-            model.start_date = new_start_date
+            model.start_date = datetime.now()
+            model.ends_at = datetime.now() + relativedelta(months=1)
             self.db.commit()
             return BaseResponse(
                 success=True,
                 message='Suscriptions updated',
                 data=model.to_json()
-            )
+            ).to_response()
         except Exception as e:
             raise NotUpdatedError()
 
@@ -66,6 +71,6 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
             return BaseResponse(
                 success=True,
                 message='Suscriptions deleted'
-            )
+            ).to_response()
         except Exception as e:
             raise NotDeletedError()

@@ -14,7 +14,7 @@ class UsersPort(ABC):
         pass
 
     @abstractmethod
-    def update_users(self, uuid: str, password: str, username: str):
+    def update_users(self, uuid: str, newPassword: str, password: str, username: str):
         pass
 
     @abstractmethod

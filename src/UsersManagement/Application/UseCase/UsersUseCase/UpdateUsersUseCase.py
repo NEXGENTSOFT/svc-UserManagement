@@ -8,4 +8,5 @@ class UpdateUsersUseCase:
         uuid = request['uuid']
         userName = request['userName']
         password = request['password']
-        return self.port.update_users(uuid, userName, password)
+        newPassword = request['newPassword']
+        return self.port.update_users(uuid, newPassword, password, userName)

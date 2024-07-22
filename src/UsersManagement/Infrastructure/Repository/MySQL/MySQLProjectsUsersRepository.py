@@ -37,13 +37,13 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
                 success=True,
                 message='Successfully fetched projects users',
                 data=model.to_json()
-            )
+            ).to_response()
         except Exception as e:
             raise NotFoundError()
 
     def create_projects_users(self, projects_users: ProjectsUsers):
         try:
-            model = Model(**projects_users.__dict__)
+            model = Model(uuid=projects_users.uuid, user_id=projects_users.user_id, project_id=projects_users.project_id)
             self.db.add(model)
             self.db.commit()
             response = BaseResponse(
@@ -65,7 +65,7 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
             response = BaseResponse(
                 success=True,
                 message='Successfully deleted projects users',
-            )
-            return response.to_response()
+            ).to_response()
+            return response
         except Exception as e:
             raise NotDeletedError()

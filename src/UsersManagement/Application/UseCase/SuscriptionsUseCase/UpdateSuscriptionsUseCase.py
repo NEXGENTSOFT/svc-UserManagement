@@ -6,6 +6,5 @@ class UpdateSuscriptionsUseCase:
         self.port = port
 
     def run(self, request):
-        start_date = request['start_date']
         uuid = request['uuid']
-        return self.port.update_suscriptions(start_date, uuid)
+        return self.port.update_suscriptions(uuid)

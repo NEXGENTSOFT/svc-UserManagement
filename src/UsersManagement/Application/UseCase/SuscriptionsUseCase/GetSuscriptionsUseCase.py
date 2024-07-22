@@ -6,4 +6,4 @@ class GetSuscriptionsUseCase:
         self.port = port
 
     def run(self, user_id):
-        self.port.get_suscriptions(user_id)
+        return self.port.get_suscriptions(user_id)

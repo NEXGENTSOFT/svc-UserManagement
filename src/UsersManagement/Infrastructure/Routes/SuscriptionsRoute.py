@@ -29,6 +29,6 @@ def create_suscriptions():
 def update_suscriptions():
     return update_controller.run(request)
 
-@suscriptions_routes.route("/<string: uuid>", methods=['DELETE'])
+@suscriptions_routes.route("/<string:uuid>", methods=['DELETE'])
 def delete_suscriptions(uuid):
     return delete_controller.run(uuid)

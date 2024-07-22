@@ -15,14 +15,14 @@ class ValidationError(Exception):
 
 
 class Users:
-    def __init__(self, name: str, lastname: str, email: str, password: str, username: str, birthday: str):
+    def __init__(self, name: str, last_name: str, email: str, password: str, username: str, birthdate: str):
         self.uuid = uuid.uuid4()
         self.name = self._validate_name(name)
-        self.lastname = self._validate_lastname(lastname)
+        self.last_name = self._validate_lastname(last_name)
         self.email = self._validate_email(email)
-        self.password = hash_password(self._validate_password(password))
+        self.password = self._validate_password(password)
         self.username = self._validate_username(username)
-        self.birthday = self._validate_birthday(birthday)
+        self.birthdate = self._validate_birthday(birthdate)
 
     def _validate_name(self, name):
         if isinstance(name, str) and name.isalpha():
@@ -54,7 +54,7 @@ class Users:
             raise ValidationError("Password must contain at least one uppercase letter")
         if not re.search(r'[a-z]', password):
             raise ValidationError("Password must contain at least one lowercase letter")
-        if not re.search(r'[!@#$%^&*(),.?":{}|<>\\-+]', password):
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>\-+]', password):
             raise ValidationError("Password must contain at least one special character")
         return password
 

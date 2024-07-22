@@ -7,4 +7,4 @@ class UpdateSuscriptionsController:
         self.use_case = UseCase(port)
 
     def run(self, request):
-        return self.use_case.run(request)
+        return self.use_case.run(request.get_json())
