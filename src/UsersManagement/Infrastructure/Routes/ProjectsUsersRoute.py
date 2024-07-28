@@ -1,11 +1,13 @@
 from flask import Blueprint, request
-
+import threading
 from src.UsersManagement.Infrastructure.Controllers.ProjectsUsersControllers.GetProjectsUsersController import GetProjectsUsersController as GetController
 from src.UsersManagement.Infrastructure.Controllers.ProjectsUsersControllers.FindPorjectsUsersByUuidController import FindProjectsUsersByUuidController as FindController
-from src.UsersManagement.Infrastructure.Controllers.ProjectsUsersControllers.CreateProjectsUsersController import CreateProjectsUsersController as CreateController
+from src.UsersManagement.Infrastructure.Controllers.ProjectsUsersControllers.CreateProjectsUsersController import \
+    CreateProjectsUsersController as CreateController, CreateProjectsUsersController
 from src.UsersManagement.Infrastructure.Controllers.ProjectsUsersControllers.DeleteProjectsUsersController import DeleteProjectsUsersController as DeleteController
-
 from src.UsersManagement.Infrastructure.Repository.MySQL.MySQLProjectsUsersRepository import MySQLProjectsUsersRepository as Repository
+from src.UsersManagement.Infrastructure.Services.RabbitMQServices.CreateProjectUserConsumer import \
+    CreateProjectUserConsumer
 
 repository = Repository()
 
@@ -24,9 +26,12 @@ def get_project_users(user_id):
 def find_project_user(uuid):
     return find_controller.run(uuid)
 
-@users_project_routes.route("/", methods=['POST'])
-def create_user_project():
-    return create_controller.run(request)
+#@users_project_routes.route("/", methods=['POST'])
+def create_user_project_thread(app):
+    create_projects_users_consumer = CreateProjectUserConsumer(create_controller, app)
+    thread = threading.Thread(target=create_projects_users_consumer.start_consuming_queue_create_project_user)
+    thread.daemon = True
+    thread.start()
 
 @users_project_routes.route("/<string:uuid>", methods=['DELETE'])
 def delete_user_project(uuid):

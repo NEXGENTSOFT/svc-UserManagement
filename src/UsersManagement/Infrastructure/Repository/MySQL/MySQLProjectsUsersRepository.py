@@ -6,31 +6,30 @@ from src.UsersManagement.Infrastructure.Advices.Exceptions.NotFoundError import 
 from src.UsersManagement.Infrastructure.DTOS.Responses.BaseResponse import BaseResponse
 from src.UsersManagement.Infrastructure.Models.MySQL.MySQLProjectsUsersModel import MySQLProjectsUsersModel as Model
 from src.Database.MySQL.connection import Base, engine, session_local
+from uuid import uuid4
 
 
 class MySQLProjectsUsersRepository(ProjectsUsersPort):
 
     def __init__(self):
         Base.metadata.create_all(bind=engine)
-        self.db = session_local()
 
     def get_projects_users(self, user_id):
+        db = session_local()
         try:
-            models = self.db.query(Model).filter(Model.user_id == user_id).all()
+
+            models = db.query(Model).filter(Model.user_id == user_id).all()
             if models is None:
                 raise NotFoundError
-            response = BaseResponse(
-                success=True,
-                message='Successfully fetched projects users',
-                data=[m.to_json() for m in models]
-            )
-            return response.to_response()
+            print(f"Models found: {[str(m.project_id) for m in models]}")
+            return {"data": [m.project_id for m in models], "session_uuid": str(uuid4())}
         except Exception as e:
             raise NotFoundError()
 
     def find_projects_users_by_uuid(self, uuid):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == uuid).first()
+            model = db.query(Model).filter(Model.uuid == uuid).first()
             if model is None:
                 raise NotFoundError
             return BaseResponse(
@@ -42,10 +41,11 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
             raise NotFoundError()
 
     def create_projects_users(self, projects_users: ProjectsUsers):
+        db = session_local()
         try:
             model = Model(uuid=projects_users.uuid, user_id=projects_users.user_id, project_id=projects_users.project_id)
-            self.db.add(model)
-            self.db.commit()
+            db.add(model)
+            db.commit()
             response = BaseResponse(
                 success=True,
                 message='Successfully created projects users',
@@ -56,12 +56,13 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
             raise NotCreatedError()
 
     def delete_projects_users(self, relation_uuid):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == relation_uuid).first()
+            model = db.query(Model).filter(Model.uuid == relation_uuid).first()
             if model is None:
                 raise NotFoundError
-            self.db.delete(model)
-            self.db.commit()
+            db.delete(model)
+            db.commit()
             response = BaseResponse(
                 success=True,
                 message='Successfully deleted projects users',

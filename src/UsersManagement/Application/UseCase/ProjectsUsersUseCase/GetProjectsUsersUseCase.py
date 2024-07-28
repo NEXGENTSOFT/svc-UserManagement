@@ -1,4 +1,5 @@
 from src.UsersManagement.Domain.Ports.ProjectsUsersPort import ProjectsUsersPort as Port
+from src.UsersManagement.Infrastructure.Services.RabbitMQServices.ListProjectsUsersSagaProducer import ListProjectsUsersSagaProducer
 
 
 class GetProjectsUsersUseCase:
@@ -6,4 +7,7 @@ class GetProjectsUsersUseCase:
         self.port = port
 
     def run(self, user_id:int):
-        return self.port.get_projects_users(user_id)
+        new_request = self.port.get_projects_users(user_id)
+        saga_producer = ListProjectsUsersSagaProducer()
+        return saga_producer.run(new_request)
+

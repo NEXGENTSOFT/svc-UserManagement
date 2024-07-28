@@ -17,11 +17,11 @@ class MySQLUsersRepository(UsersPort):
 
     def __init__(self):
         Base.metadata.create_all(bind=engine)
-        self.db = session_local()
 
     def get_users(self, uuid: str):
+        db = session_local()
         try:
-            user = self.db.query(Model).filter(Model.uuid == uuid).first()
+            user = db.query(Model).filter(Model.uuid == uuid).first()
             if user is None:
                 raise NotFoundError()
             response = BaseResponse(
@@ -34,7 +34,7 @@ class MySQLUsersRepository(UsersPort):
             raise NotFoundError()
 
     def create_users(self, user: Users):
-
+        db = session_local()
         try:
             hashed = hash_password(user.password)
             newUser = Model(
@@ -46,8 +46,8 @@ class MySQLUsersRepository(UsersPort):
                 username=user.username,
                 birthdate=datetime.strptime(user.birthdate, '%Y-%m-%d').date()
             )
-            self.db.add(newUser)
-            self.db.commit()
+            db.add(newUser)
+            db.commit()
             token = write_token(data={"username": newUser.username, "user_uuid": newUser.uuid})
             response = BaseResponse(
                 success=True,
@@ -59,8 +59,9 @@ class MySQLUsersRepository(UsersPort):
             raise NotCreatedError()
 
     def update_users(self, uuid: str, newPassword: str, password: str, username: str):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == uuid).first()
+            model = db.query(Model).filter(Model.uuid == uuid).first()
             if model is None:
                 raise NotFoundError()
 
@@ -69,7 +70,7 @@ class MySQLUsersRepository(UsersPort):
                     model.password = hash_password(newPassword)
                     print("New hashed password:", model.password)
                     print("Committing new password...")
-                    self.db.commit()
+                    db.commit()
                     print("Password committed successfully")
                 else:
                     raise LoginFailedError()
@@ -77,7 +78,7 @@ class MySQLUsersRepository(UsersPort):
             if username is not None:
                 model.username = username
                 print("Committing new username...")
-                self.db.commit()
+                db.commit()
                 print("Username committed successfully")
 
             response = BaseResponse(
@@ -88,14 +89,15 @@ class MySQLUsersRepository(UsersPort):
             return response.to_response()
         except Exception as e:
             print(f"Error updating user: {e}")
-            self.db.rollback()
+            db.rollback()
             raise NotUpdatedError()
 
     def delete_users(self, uuid: str, password: str):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == uuid).first()
-            self.db.delete(model)
-            self.db.commit()
+            model = db.query(Model).filter(Model.uuid == uuid).first()
+            db.delete(model)
+            db.commit()
             if model is None:
                 raise NotFoundError()
             response = BaseResponse(
@@ -108,8 +110,9 @@ class MySQLUsersRepository(UsersPort):
             raise NotDeletedError()
 
     def login(self, email: str, password: str):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.email == email).first()
+            model = db.query(Model).filter(Model.email == email).first()
             if model is None:
                 raise NotFoundError()
             if check_password(password, model.password):

@@ -16,11 +16,11 @@ from dateutil.relativedelta import relativedelta
 class MySQLSuscriptionsRepository(SuscriptionsPort):
     def __init__(self):
         Base.metadata.create_all(bind=engine)
-        self.db = session_local()
 
     def get_suscriptions(self, user_id):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.user_id == user_id).first()
+            model = db.query(Model).filter(Model.user_id == user_id).first()
             if model is None:
                 raise NotFoundError()
             return BaseResponse(
@@ -32,10 +32,11 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
             raise NotFoundError()
 
     def create_suscriptions(self, suscriptions: Suscriptions):
+        db = session_local()
         try:
             model = Model(starts=datetime.now(), user_id=suscriptions.user_id, uuid=suscriptions.uuid, ends_at=datetime.now()+timedelta(days=7))
-            self.db.add(model)
-            self.db.commit()
+            db.add(model)
+            db.commit()
             return BaseResponse(
                 success=True,
                 message='Suscriptions created',
@@ -46,13 +47,14 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
             raise NotCreatedError()
 
     def update_suscriptions(self, uuid):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == uuid).first()
+            model = db.query(Model).filter(Model.uuid == uuid).first()
             if model is None:
                 raise NotFoundError()
             model.start_date = datetime.now()
             model.ends_at = datetime.now() + relativedelta(months=1)
-            self.db.commit()
+            db.commit()
             return BaseResponse(
                 success=True,
                 message='Suscriptions updated',
@@ -62,12 +64,13 @@ class MySQLSuscriptionsRepository(SuscriptionsPort):
             raise NotUpdatedError()
 
     def delete_suscriptions(self, suscription_uuid):
+        db = session_local()
         try:
-            model = self.db.query(Model).filter(Model.uuid == suscription_uuid).first()
+            model = db.query(Model).filter(Model.uuid == suscription_uuid).first()
             if model is None:
                 raise NotFoundError()
-            self.db.delete(model)
-            self.db.commit()
+            db.delete(model)
+            db.commit()
             return BaseResponse(
                 success=True,
                 message='Suscriptions deleted'
