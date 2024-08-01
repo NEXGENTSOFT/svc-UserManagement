@@ -33,6 +33,6 @@ def create_user_project_thread(app):
     thread.daemon = True
     thread.start()
 
-@users_project_routes.route("/<string:uuid>", methods=['DELETE'])
-def delete_user_project(uuid):
-    return delete_controller.run(uuid)
+@users_project_routes.route("/<int:user_id>/<int:project_id>", methods=['DELETE'])
+def delete_user_project(user_id, project_id):
+    return delete_controller.run(user_id, project_id)

@@ -6,5 +6,5 @@ class DeleteProjectsUsersController:
     def __init__(self, port: Port):
         self.use_case = UseCase(port)
 
-    def run(self, uuid):
-        return self.use_case.run(uuid)
+    def run(self, user_id, project_id):
+        return self.use_case.run(user_id, project_id)

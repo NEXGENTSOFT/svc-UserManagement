@@ -5,5 +5,5 @@ class DeleteProjectsUsersUseCase:
     def __init__(self, port: Port):
         self.port = port
 
-    def run(self, relation_uuid: str):
-        return self.port.delete_projects_users(relation_uuid)
+    def run(self, user_id, project_id):
+        return self.port.delete_projects_users(user_id, project_id)

@@ -56,10 +56,10 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
         except Exception as e:
             raise NotCreatedError()
 
-    def delete_projects_users(self, relation_uuid):
+    def delete_projects_users(self, user_id, project_id):
         db = session_local()
         try:
-            model = db.query(Model).filter(Model.uuid == relation_uuid).first()
+            model = db.query(Model).filter(Model.user_id == user_id, Model.project_id == project_id).first()
             if model is None:
                 raise NotFoundError
             db.delete(model)

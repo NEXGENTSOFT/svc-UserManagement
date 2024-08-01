@@ -18,5 +18,5 @@ class ProjectsUsersPort(ABC):
             pass
 
         @abstractmethod
-        def delete_projects_users(self, relation_uuid: str):
+        def delete_projects_users(self, user_id, project_id):
             pass
