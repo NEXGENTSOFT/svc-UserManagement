@@ -20,6 +20,7 @@ class MySQLProjectsUsersRepository(ProjectsUsersPort):
 
             models = db.query(Model).filter(Model.user_id == user_id).all()
             if models is None:
+                print(NotFoundError)
                 raise NotFoundError
             print(f"Models found: {[str(m.project_id) for m in models]}")
             return {"data": [m.project_id for m in models], "session_uuid": str(uuid4())}
